@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hope Foundation - NGO Management System</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        amber: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        slate: {
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .font-serif-title { font-family: 'Playfair Display', serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans bg-slate-50 text-slate-800">
+
+    <!-- Top Header -->
+    <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-30 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- NGO Brand -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+                    <div class="w-10 h-10 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-md font-bold text-xl">
+                        <i class="fa-solid font-bold fa-hands-holding-child"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg tracking-tight text-white block leading-none">HOPE FOUNDATION</span>
+                        <span class="text-xs text-emerald-400 font-medium tracking-wider uppercase">Project Management System</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="hidden md:flex space-x-1">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn px-3 py-2 rounded-md text-sm font-medium transition-colors text-slate-300 hover:text-white hover:bg-slate-800">
+                        <i class="fa-solid fa-chart-line mr-1.5 text-xs"></i> Overview
+                    </button>
+                    <button onclick="switchTab('volunteers')" id="nav-volunteers" class="nav-btn px-3 py-2 rounded-md text-sm font-medium transition-colors bg-emerald-600 text-white shadow-sm">
+                        <i class="fa-solid fa-users mr-1.5 text-xs"></i> 04 - Volunteers
+                    </button>
+                    <button onclick="switchTab('reports')" id="nav-reports" class="nav-btn px-3 py-2 rounded-md text-sm font-medium transition-colors text-slate-300 hover:text-white hover:bg-slate-800">
+                        <i class="fa-solid fa-chart-pie mr-1.5 text-xs"></i> 07 - Reports & Analytics
+                    </button>
+                </nav>
+
+                <!-- Profile & Action Bar -->
+                <div class="flex items-center space-x-4">
+                    <div class="relative text-left hidden sm:block">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-900/80 text-emerald-300 border border-emerald-700/50">
+                            <span class="w-2 h-2 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span> India Chapter (MH/DL/KA)
+                        </span>
+                    </div>
+                    <div class="flex items-center space-x-2 border-l border-slate-700 pl-4">
+                        <div class="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center font-bold text-slate-900 text-sm">
+                            PM
+                        </div>
+                        <div class="hidden lg:block text-left text-xs">
+                            <div class="font-semibold text-slate-200">Priya Nair</div>
+                            <div class="text-slate-400">Project Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Navigation Menu -->
+        <div class="md:hidden bg-slate-800 border-t border-slate-700 px-2 pt-2 pb-3 space-y-1">
+            <button onclick="switchTab('dashboard')" class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-slate-700">
+                <i class="fa-solid fa-chart-line mr-2"></i> Overview
+            </button>
+            <button onclick="switchTab('volunteers')" class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-slate-700">
+                <i class="fa-solid fa-users mr-2"></i> 04 - Volunteers Module
+            </button>
+            <button onclick="switchTab('reports')" class="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-white hover:bg-slate-700">
+                <i class="fa-solid fa-chart-pie mr-2"></i> 07 - Reports & Analytics
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+        <!-- SECTION 1: SYSTEM OVERVIEW (Dashboard Summary) -->
+        <section id="sec-dashboard" class="space-y-6">
+            <div class="bg-gradient-to-r from-emerald-800 to-slate-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+                <div class="relative z-10">
+                    <div class="inline-block bg-emerald-500/20 text-emerald-300 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-500/30 mb-2">
+                        Hope Foundation India • Operational Hub
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">NGO Project & Event Management System</h1>
+                    <p class="text-slate-300 text-sm mt-1 max-w-2xl">
+                        Empowering social change across 12+ Indian states. Managing active programs, field volunteers, real-time analytics, and community impact metrics.
+                    </p>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-6 pt-6 border-t border-slate-700/60">
+                        <div class="bg-slate-800/60 backdrop-blur rounded-xl p-3 border border-slate-700">
+                            <span class="text-xs text-slate-400 block font-medium">Active Volunteers</span>
+                            <span class="text-2xl font-bold text-emerald-400" id="dash-total-volunteers">248</span>
+                            <span class="text-[10px] text-emerald-300 block mt-0.5"><i class="fa-solid fa-arrow-up text-[9px]"></i> +18 this month</span>
+                        </div>
+                        <div class="bg-slate-800/60 backdrop-blur rounded-xl p-3 border border-slate-700">
+                            <span class="text-xs text-slate-400 block font-medium">Hours Contributed</span>
+                            <span class="text-2xl font-bold text-amber-400" id="dash-total-hours">4,820 hrs</span>
+                            <span class="text-[10px] text-slate-400 block mt-0.5">Across 32 initiatives</span>
+                        </div>
+                        <div class="bg-slate-800/60 backdrop-blur rounded-xl p-3 border border-slate-700">
+                            <span class="text-xs text-slate-400 block font-medium">Community Impact Value</span>
+                            <span class="text-2xl font-bold text-white" id="dash-economic-val">₹16.87 Lakhs</span>
+                            <span class="text-[10px] text-emerald-400 block mt-0.5">Est. ₹350/hr benchmark</span>
+                        </div>
+                        <div class="bg-slate-800/60 backdrop-blur rounded-xl p-3 border border-slate-700">
+                            <span class="text-xs text-slate-400 block font-medium">Beneficiaries Reached</span>
+                            <span class="text-2xl font-bold text-emerald-400">58,400+</span>
+                            <span class="text-[10px] text-slate-400 block mt-0.5">Food, Health & Edu</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Module Navigation Quick Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Volunteers Module Banner -->
+                <div onclick="switchTab('volunteers')" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-all cursor-pointer group hover:border-emerald-500">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl font-bold group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-users"></i>
+                        </div>
+                        <span class="text-xs font-semibold px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
+                            Module 04 - ACTIVE
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">04 - Volunteers Module</h3>
+                    <p class="text-slate-600 text-sm mt-1">Manage volunteer database, skill matching, attendance tracking, project & event assignments, performance ratings, and downloadable certificates.</p>
+                    <div class="mt-4 flex items-center text-emerald-600 font-semibold text-sm">
+                        Open Volunteers Management <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+
+                <!-- Reports & Analytics Banner -->
+                <div onclick="switchTab('reports')" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 hover:shadow-md transition-all cursor-pointer group hover:border-amber-500">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl font-bold group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                            <i class="fa-solid fa-chart-pie"></i>
+                        </div>
+                        <span class="text-xs font-semibold px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full border border-amber-200">
+                            Module 07 - ACTIVE
+                        </span>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-900 group-hover:text-amber-700 transition-colors">07 - Reports & Intelligence</h3>
+                    <p class="text-slate-600 text-sm mt-1">Comprehensive NGO analytics dashboard, financial allocation (INR ₹), project impact reports, beneficiary demographics, and custom CSV exporter.</p>
+                    <div class="mt-4 flex items-center text-amber-600 font-semibold text-sm">
+                        Open Reports & Analytics Hub <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: MODULE 04 - VOLUNTEERS MODULE -->
+        <section id="sec-volunteers" class="hidden space-y-6">
+            <!-- Header Bar -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded border border-emerald-200">Module 04</span>
+                        <h2 class="text-2xl font-bold text-slate-900">Volunteers Management</h2>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">Recruit, deploy, track attendance, evaluate performance, and generate certificates.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openModal('addVolunteerModal')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                        <span>Add Volunteer</span>
+                    </button>
+                    <button onclick="openModal('assignModal')" class="bg-slate-800 hover:bg-slate-900 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-tasks"></i>
+                        <span>Assign Duty</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sub-Tabs Navigation for Module 04 Sitemap Items -->
+            <div class="bg-white rounded-xl p-1.5 border border-slate-200 shadow-sm flex space-x-1 overflow-x-auto custom-scrollbar">
+                <button onclick="switchVolTab('v-list')" id="vtab-v-list" class="vsub-tab px-4 py-2 text-xs font-semibold rounded-lg bg-emerald-600 text-white whitespace-nowrap">
+                    <i class="fa-solid fa-list mr-1.5"></i> Volunteer Directory
+                </button>
+                <button onclick="switchVolTab('v-skills')" id="vtab-v-skills" class="vsub-tab px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-sliders mr-1.5"></i> Skills & Availability
+                </button>
+                <button onclick="switchVolTab('v-assignments')" id="vtab-v-assignments" class="vsub-tab px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-clipboard-check mr-1.5"></i> Project & Event Assignments
+                </button>
+                <button onclick="switchVolTab('v-attendance')" id="vtab-v-attendance" class="vsub-tab px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-calendar-check mr-1.5"></i> Attendance Logger
+                </button>
+                <button onclick="switchVolTab('v-performance')" id="vtab-v-performance" class="vsub-tab px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-star mr-1.5"></i> Performance & Index
+                </button>
+                <button onclick="switchVolTab('v-certs')" id="vtab-v-certs" class="vsub-tab px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-certificate mr-1.5"></i> Certificates / Recognition
+                </button>
+            </div>
+
+            <!-- SUB TAB 1: VOLUNTEER LIST / DIRECTORY -->
+            <div id="vsub-v-list" class="space-y-4">
+                <!-- Search & Filters -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
+                    <div class="relative w-full md:w-80">
+                        <i class="fa-solid fa-search absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                        <input type="text" id="v-search" onkeyup="renderVolunteers()" placeholder="Search by name, city, skill..." class="w-full pl-10 pr-4 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                        <select id="filter-skill" onchange="renderVolunteers()" class="px-3 py-2 text-sm border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-emerald-500 text-slate-700">
+                            <option value="ALL">All Skills</option>
+                            <option value="Education">Education & Teaching</option>
+                            <option value="Healthcare">Healthcare & Medical</option>
+                            <option value="Disaster Relief">Disaster Relief</option>
+                            <option value="Event Ops">Event Ops & Logistics</option>
+                            <option value="IT/Tech">IT & Digital Media</option>
+                        </select>
+                        <select id="filter-city" onchange="renderVolunteers()" class="px-3 py-2 text-sm border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-emerald-500 text-slate-700">
+                            <option value="ALL">All Cities</option>
+                            <option value="Mumbai">Mumbai</option>
+                            <option value="Delhi NCR">Delhi NCR</option>
+                            <option value="Pune">Pune</option>
+                            <option value="Bengaluru">Bengaluru</option>
+                            <option value="Kolkata">Kolkata</option>
+                        </select>
+                        <div class="flex border border-slate-300 rounded-xl overflow-hidden">
+                            <button onclick="setVolView('table')" id="btn-view-table" class="px-3 py-2 bg-emerald-600 text-white text-xs font-semibold"><i class="fa-solid fa-table-list"></i></button>
+                            <button onclick="setVolView('cards')" id="btn-view-cards" class="px-3 py-2 bg-white text-slate-600 text-xs font-semibold hover:bg-slate-50"><i class="fa-solid fa-grip"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table View -->
+                <div id="vol-table-container" class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-600">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                                <tr>
+                                    <th class="py-3.5 px-4">Volunteer Name</th>
+                                    <th class="py-3.5 px-4">Location</th>
+                                    <th class="py-3.5 px-4">Primary Skill</th>
+                                    <th class="py-3.5 px-4">Availability</th>
+                                    <th class="py-3.5 px-4">Hours Contributed</th>
+                                    <th class="py-3.5 px-4">Status</th>
+                                    <th class="py-3.5 px-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vol-tbody" class="divide-y divide-slate-100">
+                                <!-- Dynamic Volunteer Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Cards View -->
+                <div id="vol-cards-container" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Dynamic Volunteer Cards -->
+                </div>
+            </div>
+
+            <!-- SUB TAB 2: SKILLS & AVAILABILITY MATRIX -->
+            <div id="vsub-v-skills" class="hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-base mb-1">Skills & Availability Matrix</h3>
+                    <p class="text-xs text-slate-500 mb-4">Filter registered Hope Foundation volunteers based on deployment suitability.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
+                            <span class="text-xs font-semibold uppercase text-emerald-800">Education & Mentorship</span>
+                            <div class="text-2xl font-bold text-emerald-900 mt-1" id="count-skill-edu">0 Volunteers</div>
+                            <p class="text-xs text-slate-600 mt-1">Available for Shiksha Mission remedial classes.</p>
+                        </div>
+                        <div class="p-4 bg-amber-50 rounded-xl border border-amber-100">
+                            <span class="text-xs font-semibold uppercase text-amber-800">Healthcare & Medical</span>
+                            <div class="text-2xl font-bold text-amber-900 mt-1" id="count-skill-health">0 Volunteers</div>
+                            <p class="text-xs text-slate-600 mt-1">Nurses, doctors, and health checkup coordinators.</p>
+                        </div>
+                        <div class="p-4 bg-slate-100 rounded-xl border border-slate-200">
+                            <span class="text-xs font-semibold uppercase text-slate-800">Event Ops & Food Drive</span>
+                            <div class="text-2xl font-bold text-slate-900 mt-1" id="count-skill-ops">0 Volunteers</div>
+                            <p class="text-xs text-slate-600 mt-1">Field logistics and Annapurna Food Drive team.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <h4 class="font-semibold text-sm text-slate-800 mb-3">Availability Heatmap Breakdown</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-xs text-left border border-slate-200 rounded-lg">
+                                <thead class="bg-slate-100 text-slate-700 font-semibold">
+                                    <tr>
+                                        <th class="p-3 border-b">Volunteer Name</th>
+                                        <th class="p-3 border-b">Skill Category</th>
+                                        <th class="p-3 border-b">Weekdays</th>
+                                        <th class="p-3 border-b">Weekends</th>
+                                        <th class="p-3 border-b">Emergency/Disaster Deploy</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="skills-matrix-tbody" class="divide-y divide-slate-100">
+                                    <!-- Dynamic Matrix Rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB TAB 3: PROJECT & EVENT ASSIGNMENTS -->
+            <div id="vsub-v-assignments" class="hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base">Active Field Deployment & Duty Roster</h3>
+                            <p class="text-xs text-slate-500">Volunteers assigned to Hope Foundation active NGO initiatives.</p>
+                        </div>
+                        <button onclick="openModal('assignModal')" class="bg-emerald-600 text-white text-xs font-semibold px-3 py-2 rounded-lg">
+                            <i class="fa-solid fa-plus mr-1"></i> New Assignment
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded">Project 01</span>
+                                <span class="text-xs text-slate-500">Delhi & Mumbai</span>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-sm mt-2">Shiksha Mission Education Drive</h4>
+                            <div class="mt-3 text-xs text-slate-600 space-y-1">
+                                <div><i class="fa-solid fa-users text-emerald-600 mr-1.5"></i> Assigned: <span id="assign-count-1" class="font-semibold">3 Volunteers</span></div>
+                                <div><i class="fa-solid fa-calendar text-slate-400 mr-1.5"></i> Daily Evening Sessions</div>
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded">Project 02</span>
+                                <span class="text-xs text-slate-500">Pune & Bengaluru</span>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-sm mt-2">Annapurna Meal Distribution</h4>
+                            <div class="mt-3 text-xs text-slate-600 space-y-1">
+                                <div><i class="fa-solid fa-users text-amber-600 mr-1.5"></i> Assigned: <span id="assign-count-2" class="font-semibold">4 Volunteers</span></div>
+                                <div><i class="fa-solid fa-calendar text-slate-400 mr-1.5"></i> Weekend Mornings</div>
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-blue-800 bg-blue-100 px-2 py-0.5 rounded">Project 03</span>
+                                <span class="text-xs text-slate-500">Rural Maharashtra</span>
+                            </div>
+                            <h4 class="font-bold text-slate-800 text-sm mt-2">Swasthya Free Health Camp</h4>
+                            <div class="mt-3 text-xs text-slate-600 space-y-1">
+                                <div><i class="fa-solid fa-users text-blue-600 mr-1.5"></i> Assigned: <span id="assign-count-3" class="font-semibold">2 Volunteers</span></div>
+                                <div><i class="fa-solid fa-calendar text-slate-400 mr-1.5"></i> Weekly Drives</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Duty List Table -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left text-slate-600 border border-slate-200 rounded-lg">
+                            <thead class="bg-slate-100 font-semibold text-slate-700">
+                                <tr>
+                                    <th class="p-3">Volunteer</th>
+                                    <th class="p-3">Assigned Project / Event</th>
+                                    <th class="p-3">Role / Duty</th>
+                                    <th class="p-3">Location</th>
+                                    <th class="p-3">Assignment Date</th>
+                                    <th class="p-3 text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assignments-tbody" class="divide-y divide-slate-100">
+                                <!-- Dynamic Assignments -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB TAB 4: ATTENDANCE TRACKER -->
+            <div id="vsub-v-attendance" class="hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4">
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-base">Field Attendance & Hours Logger</h3>
+                            <p class="text-xs text-slate-500">Mark volunteer attendance for active shifts and accumulate verified hours.</p>
+                        </div>
+                        <div class="text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg font-medium">
+                            Today: <span id="current-date-display" class="font-bold text-slate-800"></span>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left text-slate-600 border border-slate-200 rounded-lg">
+                            <thead class="bg-slate-100 font-semibold text-slate-700">
+                                <tr>
+                                    <th class="p-3">Volunteer</th>
+                                    <th class="p-3">Assigned Program</th>
+                                    <th class="p-3">Attendance Status</th>
+                                    <th class="p-3">Log Shift Hours</th>
+                                    <th class="p-3 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendance-tbody" class="divide-y divide-slate-100">
+                                <!-- Dynamic Attendance Rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB TAB 5: VOLUNTEER PERFORMANCE INDEX -->
+            <div id="vsub-v-performance" class="hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-base mb-1">Volunteer Performance & Quality Index</h3>
+                    <p class="text-xs text-slate-500 mb-4">Evaluations calculated from attendance, shift completion rate, and supervisor feedback score.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="performance-cards-grid">
+                        <!-- Dynamic Performance Cards -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB TAB 6: CERTIFICATES & RECOGNITION -->
+            <div id="vsub-v-certs" class="hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-base mb-1">Certificates & Recognition Generator</h3>
+                    <p class="text-xs text-slate-500 mb-4">Volunteers completing 50+ hours qualify for Hope Foundation Digital Social Impact Certificates.</p>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Eligible List -->
+                        <div class="lg:col-span-1 border border-slate-200 rounded-xl p-4 bg-slate-50">
+                            <h4 class="font-bold text-sm text-slate-800 mb-3">Eligible Volunteers (50+ Hours)</h4>
+                            <div class="space-y-2 max-h-96 overflow-y-auto custom-scrollbar pr-1" id="cert-eligible-list">
+                                <!-- Dynamic List -->
+                            </div>
+                        </div>
+
+                        <!-- Certificate Digital Preview & Downloader -->
+                        <div class="lg:col-span-2 border-2 border-dashed border-emerald-300 rounded-2xl p-6 bg-gradient-to-br from-emerald-50/50 to-white flex flex-col items-center text-center relative" id="cert-preview-box">
+                            <div class="w-full flex justify-end gap-2 no-print mb-3">
+                                <button onclick="downloadCertificatePNG()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5 transition-all">
+                                    <i class="fa-solid fa-download"></i>
+                                    <span>Download Certificate PNG</span>
+                                </button>
+                                <button onclick="printCertificate()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5 transition-all">
+                                    <i class="fa-solid fa-print"></i>
+                                    <span>Print</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Certificate Visual Box -->
+                            <div id="certificate-print-area" class="w-full border-4 border-double border-emerald-700 p-8 rounded-xl bg-white shadow-lg text-slate-800 my-2 relative">
+                                <div class="text-center space-y-3">
+                                    <div class="text-emerald-700 text-3xl font-bold uppercase tracking-wider">Hope Foundation</div>
+                                    <div class="text-xs font-semibold text-slate-500 tracking-widest uppercase">Registered NGO • Registration No. MH/2018/NGO-0492</div>
+                                    <div class="w-16 h-1 bg-amber-500 mx-auto my-3"></div>
+                                    <div class="text-xl font-serif-title font-bold text-slate-900 italic">Certificate of Appreciation</div>
+                                    <p class="text-xs text-slate-600">This certificate is proudly awarded to</p>
+                                    <div class="text-2xl font-bold text-emerald-800 underline decoration-amber-500 underline-offset-4" id="cert-holder-name">Ananya Sharma</div>
+                                    <p class="text-xs text-slate-600 max-w-md mx-auto">
+                                        In recognition of exemplary commitment and selfless service, logging <span id="cert-holder-hours" class="font-bold text-slate-900">124 hours</span> of volunteer service under the <span id="cert-holder-skill" class="font-bold">Education & Teaching</span> initiative.
+                                    </p>
+                                    <div class="pt-6 flex justify-between items-end text-xs text-slate-500 border-t border-slate-200 mt-6">
+                                        <div class="text-left">
+                                            <div class="font-bold text-slate-800">Date: Sept 28, 2026</div>
+                                            <div>Pune, MH Chapter</div>
+                                        </div>
+                                        <div class="text-center">
+                                            <div class="w-24 border-b border-slate-400 mb-1 mx-auto"></div>
+                                            <div class="font-bold text-slate-800">Dr. Rajesh V. Kurup</div>
+                                            <div class="text-[10px]">Director, Hope Foundation</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: MODULE 07 - REPORTS & ANALYTICS MODULE -->
+        <section id="sec-reports" class="hidden space-y-6">
+            <!-- Header Bar -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded border border-amber-200">Module 07</span>
+                        <h2 class="text-2xl font-bold text-slate-900">Reports & Analytics Hub</h2>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-0.5">Comprehensive intelligence, financial tracking in INR (₹), state-wise impact, and custom CSV/PDF reporting.</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span>Export CSV Data</span>
+                    </button>
+                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white text-sm font-semibold px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-print"></i>
+                        <span>Print Report</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sub-Tabs Navigation for Module 07 Sitemap Items -->
+            <div class="bg-white rounded-xl p-1.5 border border-slate-200 shadow-sm flex space-x-1 overflow-x-auto custom-scrollbar">
+                <button onclick="switchRepTab('r-dash')" id="rtab-r-dash" class="rsub-tab px-4 py-2 text-xs font-semibold rounded-lg bg-amber-600 text-white whitespace-nowrap">
+                    <i class="fa-solid fa-chart-column mr-1.5"></i> Analytics Dashboard
+                </button>
+                <button onclick="switchRepTab('r-financial')" id="rtab-r-financial" class="rsub-tab px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-indian-rupee-sign mr-1.5"></i> Financial Reports (₹)
+                </button>
+                <button onclick="switchRepTab('r-beneficiary')" id="rtab-r-beneficiary" class="rsub-tab px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-heart-pulse mr-1.5"></i> Beneficiary Impact
+                </button>
+                <button onclick="switchRepTab('r-builder')" id="rtab-r-builder" class="rsub-tab px-4 py-2 text-xs font-semibold rounded-lg text-slate-600 hover:bg-slate-100 whitespace-nowrap">
+                    <i class="fa-solid fa-sliders mr-1.5"></i> Custom Report Builder
+                </button>
+            </div>
+
+            <!-- SUB TAB 1: ANALYTICS DASHBOARD WITH CHART.JS -->
+            <div id="rsub-r-dash" class="space-y-6">
+                <!-- Visual Charts Row 1 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Chart 1: Volunteer Hours & Value Generation -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">Monthly Volunteer Hours Deployment</h3>
+                                <p class="text-xs text-slate-500">Tracked across Indian operational zones (2026)</p>
+                            </div>
+                            <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded font-semibold border border-emerald-200">
+                                Total: 4,820 hrs
+                            </span>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="chart-volunteer-hours"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Chart 2: Grant Utilization & Donations in INR -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">Financial Allocation & Expenses (INR ₹)</h3>
+                                <p class="text-xs text-slate-500">Breakdown of grants & community donations</p>
+                            </div>
+                            <span class="text-xs bg-amber-50 text-amber-700 px-2 py-1 rounded font-semibold border border-amber-200">
+                                Total: ₹48.5 Lakhs
+                            </span>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="chart-financial-pie"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Charts Row 2 -->
+                <div class="grid grid-cols-1 gap-6">
+                    <!-- Chart 3: Beneficiaries Reached By State -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-sm">Beneficiary Reach Across Indian States</h3>
+                                <p class="text-xs text-slate-500">Shiksha Mission, Food Drives & Healthcare</p>
+                            </div>
+                            <span class="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded font-semibold">
+                                58,400+ Lives Impacted
+                            </span>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="chart-state-reach"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB TAB 2: FINANCIAL REPORTS IN INR (₹) -->
+            <div id="rsub-r-financial" class="hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-base mb-1">Financial & Grants Audit (INR ₹)</h3>
+                    <p class="text-xs text-slate-500 mb-4">Detailed breakdown of grants received, expenditures, and net impact ROI.</p>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left text-slate-600 border border-slate-200 rounded-lg">
+                            <thead class="bg-slate-100 font-semibold text-slate-700">
+                                <tr>
+                                    <th class="p-3">Funding Category / Source</th>
+                                    <th class="p-3">Sanctioned Grant (₹)</th>
+                                    <th class="p-3">Disbursed Expenses (₹)</th>
+                                    <th class="p-3">Remaining Funds (₹)</th>
+                                    <th class="p-3">Utilization Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                <tr>
+                                    <td class="p-3 font-semibold text-slate-800">CSR Grant - Tata Trusts (Education)</td>
+                                    <td class="p-3 font-medium">₹20,00,000</td>
+                                    <td class="p-3 text-slate-600">₹18,20,000</td>
+                                    <td class="p-3 text-emerald-700 font-semibold">₹1,80,000</td>
+                                    <td class="p-3"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-bold">91% Utilized</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold text-slate-800">Individual Public Donations (Annapurna Drive)</td>
+                                    <td class="p-3 font-medium">₹15,00,000</td>
+                                    <td class="p-3 text-slate-600">₹14,10,000</td>
+                                    <td class="p-3 text-emerald-700 font-semibold">₹90,000</td>
+                                    <td class="p-3"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-bold">94% Utilized</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold text-slate-800">State Health Mission Aid (Swasthya Camp)</td>
+                                    <td class="p-3 font-medium">₹10,00,000</td>
+                                    <td class="p-3 text-slate-600">₹8,90,000</td>
+                                    <td class="p-3 text-emerald-700 font-semibold">₹1,10,000</td>
+                                    <td class="p-3"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-bold">89% Utilized</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3 font-semibold text-slate-800">Disaster Emergency Contingency Fund</td>
+                                    <td class="p-3 font-medium">₹3,50,000</td>
+                                    <td class="p-3 text-slate-600">₹1,20,000</td>
+                                    <td class="p-3 text-emerald-700 font-semibold">₹2,30,000</td>
+                                    <td class="p-3"><span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded font-bold">34% Reserved</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB TAB 3: BENEFICIARY IMPACT -->
+            <div id="rsub-r-beneficiary" class="hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-base mb-1">Beneficiary Demographics & Program Output</h3>
+                    <p class="text-xs text-slate-500 mb-4">Audited metrics on community services delivered across India.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="text-xs text-slate-500 font-semibold">Shiksha Mission</span>
+                            <div class="text-2xl font-bold text-emerald-700 mt-1">12,500+ Children</div>
+                            <p class="text-xs text-slate-500 mt-1">Provided free learning kits & daily remedial tutoring in urban slums.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="text-xs text-slate-500 font-semibold">Annapurna Food Drive</span>
+                            <div class="text-2xl font-bold text-amber-700 mt-1">45,000+ Meals</div>
+                            <p class="text-xs text-slate-500 mt-1">Freshly cooked nutrition packs distributed to daily wage workers.</p>
+                        </div>
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                            <span class="text-xs text-slate-500 font-semibold">Swasthya Camp</span>
+                            <div class="text-2xl font-bold text-blue-700 mt-1">9,000+ Patients</div>
+                            <p class="text-xs text-slate-500 mt-1">Free diagnostic health checkups and essential medicine distribution.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB TAB 4: CUSTOM REPORT BUILDER -->
+            <div id="rsub-r-builder" class="hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-base mb-1">Custom Dynamic Report Builder</h3>
+                    <p class="text-xs text-slate-500 mb-4">Select parameters to generate tailored report metrics.</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200 mb-6">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Target Module</label>
+                            <select id="builder-module" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-white">
+                                <option>04 - Volunteers & Attendance</option>
+                                <option>07 - Financials & Grants</option>
+                                <option>05 - Beneficiary Coverage</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Geographic Region</label>
+                            <select id="builder-region" class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-white">
+                                <option>All India</option>
+                                <option>Maharashtra (Mumbai/Pune)</option>
+                                <option>Delhi NCR</option>
+                                <option>Karnataka (Bengaluru)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Time Horizon</label>
+                            <select class="w-full text-xs p-2 border border-slate-300 rounded-lg bg-white">
+                                <option>Year 2026 (Current)</option>
+                                <option>Q3 2026</option>
+                                <option>Last 6 Months</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button onclick="generateCustomReport()" class="w-full bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold py-2 px-4 rounded-lg shadow-sm">
+                                <i class="fa-solid fa-gear mr-1"></i> Generate Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Custom Report Output Container -->
+                    <div id="custom-report-output" class="p-4 bg-white border border-slate-200 rounded-xl">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="font-bold text-sm text-slate-800" id="report-title">Custom Report Preview</span>
+                            <span class="text-xs text-slate-400">Generated for Hope Foundation Audit</span>
+                        </div>
+                        <div class="text-xs text-slate-600 space-y-2" id="report-body">
+                            Click 'Generate Report' above to run cross-module aggregated metrics.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL 1: ADD VOLUNTEER -->
+    <div id="addVolunteerModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative border border-slate-100">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                <h3 class="font-bold text-slate-900 text-lg">Recruit New Volunteer</h3>
+                <button onclick="closeModal('addVolunteerModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="addVolForm" onsubmit="handleAddVolunteer(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Full Name *</label>
+                    <input type="text" id="new-name" required placeholder="e.g. Vikram Malhotra" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">City Location *</label>
+                        <select id="new-city" required class="w-full p-2.5 border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-emerald-500">
+                            <option value="Mumbai">Mumbai</option>
+                            <option value="Delhi NCR">Delhi NCR</option>
+                            <option value="Pune">Pune</option>
+                            <option value="Bengaluru">Bengaluru</option>
+                            <option value="Kolkata">Kolkata</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-700 mb-1">Primary Skill *</label>
+                        <select id="new-skill" required class="w-full p-2.5 border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-emerald-500">
+                            <option value="Education">Education</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Disaster Relief">Disaster Relief</option>
+                            <option value="Event Ops">Event Ops</option>
+                            <option value="IT/Tech">IT/Tech</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Availability Schedule</label>
+                    <select id="new-avail" class="w-full p-2.5 border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-emerald-500">
+                        <option value="Weekends Only">Weekends Only</option>
+                        <option value="Weekdays Evening">Weekdays Evening</option>
+                        <option value="Full Time / On Call">Full Time / On Call</option>
+                    </select>
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('addVolunteerModal')" class="px-4 py-2 border border-slate-300 rounded-xl font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-sm">Save & Onboard</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ASSIGN VOLUNTEER TO PROJECT -->
+    <div id="assignModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl relative border border-slate-100">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                <h3 class="font-bold text-slate-900 text-lg">Assign Volunteer Duty</h3>
+                <button onclick="closeModal('assignModal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="assignForm" onsubmit="handleAssignVolunteer(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Select Volunteer</label>
+                    <select id="assign-vol-select" required class="w-full p-2.5 border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-emerald-500">
+                        <!-- Dynamic options -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Select NGO Project / Initiative</label>
+                    <select id="assign-proj-select" required class="w-full p-2.5 border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-emerald-500">
+                        <option value="Shiksha Mission Education Drive">Shiksha Mission Education Drive</option>
+                        <option value="Annapurna Meal Distribution">Annapurna Meal Distribution</option>
+                        <option value="Swasthya Free Health Camp">Swasthya Free Health Camp</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">Duty / Role Title</label>
+                    <input type="text" id="assign-role" required placeholder="e.g. Lead Math Tutor or Food Logistics Lead" class="w-full p-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+                <div class="pt-2 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('assignModal')" class="px-4 py-2 border border-slate-300 rounded-xl font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl shadow-sm">Assign Roster</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const initialVolunteers = [
+            { id: 1, name: "Ananya Sharma", city: "Mumbai", skill: "Education", avail: "Weekends Only", hours: 124, status: "Active", rating: 4.9, project: "Shiksha Mission Education Drive", duty: "Lead Tutor" },
+            { id: 2, name: "Rajesh Kumar", city: "Delhi NCR", skill: "Healthcare", avail: "Weekdays Evening", hours: 86, status: "Active", rating: 4.8, project: "Swasthya Free Health Camp", duty: "Triage Assistant" },
+            { id: 3, name: "Priya Patel", city: "Pune", skill: "Event Ops", avail: "Weekends Only", hours: 64, status: "Active", rating: 4.7, project: "Annapurna Meal Distribution", duty: "Logistics Lead" },
+            { id: 4, name: "Aarav Verma", city: "Bengaluru", skill: "IT/Tech", avail: "Full Time / On Call", hours: 110, status: "Active", rating: 5.0, project: "Shiksha Mission Education Drive", duty: "Digital Lab Trainer" },
+            { id: 5, name: "Sunita Rao", city: "Kolkata", skill: "Disaster Relief", avail: "Full Time / On Call", hours: 42, status: "On-Call", rating: 4.6, project: "Annapurna Meal Distribution", duty: "Supply Coordinator" },
+            { id: 6, name: "Rohan Deshmukh", city: "Pune", skill: "Education", avail: "Weekdays Evening", hours: 95, status: "Active", rating: 4.9, project: "Shiksha Mission Education Drive", duty: "Primary Mentor" }
+        ];
+
+        const initialAssignments = [
+            { volName: "Ananya Sharma", project: "Shiksha Mission Education Drive", role: "Lead Tutor", city: "Mumbai", date: "2026-09-15", status: "Active" },
+            { volName: "Rajesh Kumar", project: "Swasthya Free Health Camp", role: "Triage Assistant", city: "Delhi NCR", date: "2026-09-18", status: "Active" },
+            { volName: "Priya Patel", project: "Annapurna Meal Distribution", role: "Logistics Lead", city: "Pune", date: "2026-09-20", status: "Active" },
+            { volName: "Aarav Verma", project: "Shiksha Mission Education Drive", role: "Digital Lab Trainer", city: "Bengaluru", date: "2026-09-10", status: "Active" }
+        ];
+
+        let volunteers = [...initialVolunteers];
+        let assignments = [...initialAssignments];
+        let currentViewMode = 'table';
+        let chartHoursInstance = null;
+        let chartFinancialInstance = null;
+        let chartStateInstance = null;
+
+        async function loadDashboardData() {
+            try {
+                const [volunteersResponse, assignmentsResponse, analyticsResponse] = await Promise.all([
+                    fetch('/api/volunteers'),
+                    fetch('/api/assignments'),
+                    fetch('/api/analytics')
+                ]);
+
+                if (!volunteersResponse.ok || !assignmentsResponse.ok || !analyticsResponse.ok) {
+                    throw new Error('Failed to load dashboard data');
+                }
+
+                volunteers = await volunteersResponse.json();
+                assignments = await assignmentsResponse.json();
+                const analytics = await analyticsResponse.json();
+
+                if (analytics && analytics.totalHours !== undefined) {
+                    document.getElementById('dash-total-volunteers').innerText = analytics.totalVolunteers;
+                    document.getElementById('dash-total-hours').innerText = analytics.totalHours.toLocaleString('en-IN') + ' hrs';
+                    document.getElementById('dash-economic-val').innerText = '₹' + (analytics.economicValueINR / 100000).toFixed(2) + ' Lakhs';
+                }
+            } catch (error) {
+                console.warn('Using default local data because backend is unavailable:', error);
+                volunteers = [...initialVolunteers];
+                assignments = [...initialAssignments];
+            }
+
+            renderAll();
+        }
+
+        function renderAll() {
+            renderVolunteers();
+            renderSkillsMatrix();
+            renderAssignments();
+            renderAttendanceTable();
+            renderPerformanceGrid();
+            renderCertificatesModule();
+            populateAssignDropdown();
+            updateCalculations();
+        }
+
+        window.onload = async function() {
+            document.getElementById('current-date-display').innerText = new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+            await loadDashboardData();
+            initCharts();
+            setVolView(currentViewMode);
+        };
+
+        function switchTab(tabId) {
+            document.getElementById('sec-dashboard').classList.add('hidden');
+            document.getElementById('sec-volunteers').classList.add('hidden');
+            document.getElementById('sec-reports').classList.add('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-emerald-600', 'text-white', 'shadow-sm');
+                btn.classList.add('text-slate-300', 'hover:bg-slate-800');
+            });
+
+            document.getElementById('sec-' + tabId).classList.remove('hidden');
+            const activeNav = document.getElementById('nav-' + tabId);
+            if (activeNav) {
+                activeNav.classList.add('bg-emerald-600', 'text-white', 'shadow-sm');
+                activeNav.classList.remove('text-slate-300', 'hover:bg-slate-800');
+            }
+
+            if (tabId === 'reports') {
+                setTimeout(() => { if (chartHoursInstance) chartHoursInstance.resize(); }, 100);
+            }
+        }
+
+        function switchVolTab(subId) {
+            document.querySelectorAll('#sec-volunteers > div[id^="vsub-"]').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.vsub-tab').forEach(btn => {
+                btn.classList.remove('bg-emerald-600', 'text-white');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+
+            document.getElementById('vsub-' + subId).classList.remove('hidden');
+            const activeBtn = document.getElementById('vtab-' + subId);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-emerald-600', 'text-white');
+                activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+            }
+        }
+
+        function switchRepTab(subId) {
+            document.querySelectorAll('#sec-reports > div[id^="rsub-"]').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.rsub-tab').forEach(btn => {
+                btn.classList.remove('bg-amber-600', 'text-white');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-100');
+            });
+
+            document.getElementById('rsub-' + subId).classList.remove('hidden');
+            const activeBtn = document.getElementById('rtab-' + subId);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-amber-600', 'text-white');
+                activeBtn.classList.remove('text-slate-600', 'hover:bg-slate-100');
+            }
+        }
+
+        function setVolView(mode) {
+            currentViewMode = mode;
+            if (mode === 'table') {
+                document.getElementById('vol-table-container').classList.remove('hidden');
+                document.getElementById('vol-cards-container').classList.add('hidden');
+                document.getElementById('btn-view-table').classList.replace('bg-white', 'bg-emerald-600');
+                document.getElementById('btn-view-table').classList.replace('text-slate-600', 'text-white');
+                document.getElementById('btn-view-cards').classList.replace('bg-emerald-600', 'bg-white');
+                document.getElementById('btn-view-cards').classList.replace('text-white', 'text-slate-600');
+            } else {
+                document.getElementById('vol-table-container').classList.add('hidden');
+                document.getElementById('vol-cards-container').classList.remove('hidden');
+                document.getElementById('btn-view-cards').classList.replace('bg-white', 'bg-emerald-600');
+                document.getElementById('btn-view-cards').classList.replace('text-slate-600', 'text-white');
+                document.getElementById('btn-view-table').classList.replace('bg-emerald-600', 'bg-white');
+                document.getElementById('btn-view-table').classList.replace('text-white', 'text-slate-600');
+            }
+        }
+
+        function renderVolunteers() {
+            const query = document.getElementById('v-search').value.toLowerCase();
+            const skillFilter = document.getElementById('filter-skill').value;
+            const cityFilter = document.getElementById('filter-city').value;
+
+            const filtered = volunteers.filter(v => {
+                const matchesQuery = v.name.toLowerCase().includes(query) || v.city.toLowerCase().includes(query) || v.skill.toLowerCase().includes(query);
+                const matchesSkill = skillFilter === 'ALL' || v.skill === skillFilter;
+                const matchesCity = cityFilter === 'ALL' || v.city === cityFilter;
+                return matchesQuery && matchesSkill && matchesCity;
+            });
+
+            const tbody = document.getElementById('vol-tbody');
+            tbody.innerHTML = '';
+            filtered.forEach(v => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="py-3 px-4 font-semibold text-slate-900 flex items-center space-x-2">
+                            <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-xs">${v.name.charAt(0)}</div>
+                            <span>${v.name}</span>
+                        </td>
+                        <td class="py-3 px-4"><i class="fa-solid fa-location-dot text-slate-400 mr-1 text-xs"></i>${v.city}</td>
+                        <td class="py-3 px-4"><span class="px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-700">${v.skill}</span></td>
+                        <td class="py-3 px-4 text-xs text-slate-500">${v.avail}</td>
+                        <td class="py-3 px-4 font-bold text-slate-800">${v.hours} hrs</td>
+                        <td class="py-3 px-4">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${v.status === 'Active' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}">${v.status}</span>
+                        </td>
+                        <td class="py-3 px-4 text-right">
+                            <button onclick="viewCertFor('${v.name}')" class="text-xs text-emerald-600 font-semibold hover:underline">View Cert</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            const cardsContainer = document.getElementById('vol-cards-container');
+            cardsContainer.innerHTML = '';
+            filtered.forEach(v => {
+                cardsContainer.innerHTML += `
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-sm">${v.name.charAt(0)}</div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-sm">${v.name}</h4>
+                                    <span class="text-xs text-slate-500"><i class="fa-solid fa-location-dot mr-1"></i>${v.city}</span>
+                                </div>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${v.status === 'Active' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}">${v.status}</span>
+                        </div>
+                        <div class="text-xs space-y-1 text-slate-600 pt-2 border-t border-slate-100">
+                            <div><span class="font-semibold text-slate-700">Skill:</span> ${v.skill}</div>
+                            <div><span class="font-semibold text-slate-700">Hours Logged:</span> <span class="font-bold text-emerald-700">${v.hours} hrs</span></div>
+                            <div><span class="font-semibold text-slate-700">Rating:</span> <i class="fa-solid fa-star text-amber-500 mr-1"></i>${v.rating} / 5.0</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            populateAssignDropdown();
+        }
+
+        function renderSkillsMatrix() {
+            let edu = volunteers.filter(v => v.skill === 'Education').length;
+            let health = volunteers.filter(v => v.skill === 'Healthcare').length;
+            let ops = volunteers.filter(v => v.skill === 'Event Ops' || v.skill === 'Disaster Relief').length;
+
+            document.getElementById('count-skill-edu').innerText = `${edu} Volunteers`;
+            document.getElementById('count-skill-health').innerText = `${health} Volunteers`;
+            document.getElementById('count-skill-ops').innerText = `${ops} Volunteers`;
+
+            const tbody = document.getElementById('skills-matrix-tbody');
+            tbody.innerHTML = '';
+            volunteers.forEach(v => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 font-semibold text-slate-800">${v.name}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 bg-slate-100 rounded text-slate-700 font-medium">${v.skill}</span></td>
+                        <td class="p-3">${v.avail.includes('Weekdays') ? '<i class="fa-solid fa-check text-emerald-600"></i>' : '<i class="fa-solid fa-xmark text-slate-300"></i>'}</td>
+                        <td class="p-3">${v.avail.includes('Weekends') ? '<i class="fa-solid fa-check text-emerald-600"></i>' : '<i class="fa-solid fa-xmark text-slate-300"></i>'}</td>
+                        <td class="p-3">${v.avail.includes('Full Time') ? '<i class="fa-solid fa-check text-emerald-600"></i>' : '<i class="fa-solid fa-minus text-slate-300"></i>'}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderAssignments() {
+            const tbody = document.getElementById('assignments-tbody');
+            tbody.innerHTML = '';
+            assignments.forEach(a => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 font-semibold text-slate-800">${a.volName}</td>
+                        <td class="p-3 font-medium text-emerald-800">${a.project}</td>
+                        <td class="p-3">${a.role}</td>
+                        <td class="p-3 text-slate-500"><i class="fa-solid fa-location-dot mr-1"></i>${a.city}</td>
+                        <td class="p-3 text-slate-500">${a.date}</td>
+                        <td class="p-3 text-right"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded text-[10px] font-bold">${a.status}</span></td>
+                    </tr>
+                `;
+            });
+        }
+
+        function renderAttendanceTable() {
+            const tbody = document.getElementById('attendance-tbody');
+            tbody.innerHTML = '';
+            volunteers.forEach(v => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="p-3 font-semibold text-slate-800">${v.name}</td>
+                        <td class="p-3 text-slate-600">${v.project || 'General Assignment'}</td>
+                        <td class="p-3">
+                            <select id="att-status-${v.id}" class="text-xs p-1 border border-slate-300 rounded bg-white font-medium">
+                                <option value="Present">Present</option>
+                                <option value="Absent">Absent</option>
+                                <option value="Late">Late (30m)</option>
+                            </select>
+                        </td>
+                        <td class="p-3">
+                            <input type="number" id="att-hours-${v.id}" value="4" class="w-16 p-1 text-xs border border-slate-300 rounded text-center"> hrs
+                        </td>
+                        <td class="p-3 text-right">
+                            <button onclick="logSingleAttendance(${v.id})" class="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-semibold text-[11px]">Save Shift</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function logSingleAttendance(volId) {
+            const status = document.getElementById(`att-status-${volId}`).value;
+            const hoursLogged = parseFloat(document.getElementById(`att-hours-${volId}`).value) || 0;
+            const vol = volunteers.find(v => v.id === volId);
+
+            if (!vol) return;
+
+            try {
+                const response = await fetch('/api/attendance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ volunteerId: volId, hoursLogged, status })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Could not save attendance');
+                }
+
+                const updatedVolunteer = data.volunteer;
+                const targetIndex = volunteers.findIndex(v => v.id === updatedVolunteer.id);
+                if (targetIndex >= 0) {
+                    volunteers[targetIndex] = updatedVolunteer;
+                }
+
+                renderAll();
+                alert(`Attendance saved for ${vol.name}. Added ${hoursLogged} hours to profile.`);
+            } catch (error) {
+                alert(error.message || 'Unable to save attendance');
+            }
+        }
+
+        function renderPerformanceGrid() {
+            const grid = document.getElementById('performance-cards-grid');
+            grid.innerHTML = '';
+            volunteers.forEach(v => {
+                grid.innerHTML += `
+                    <div class="border border-slate-200 rounded-xl p-4 bg-white shadow-sm space-y-2">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-slate-900 text-sm">${v.name}</h4>
+                            <span class="text-xs font-bold text-amber-600"><i class="fa-solid fa-star mr-1"></i>${v.rating}</span>
+                        </div>
+                        <div class="text-xs text-slate-500">Total Hours: <span class="font-bold text-slate-800">${v.hours} hrs</span></div>
+                        <div class="text-xs text-slate-500">Duty: ${v.duty || 'Volunteer'}</div>
+                        <div class="pt-2 flex justify-between items-center border-t border-slate-100">
+                            <span class="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">High Performer</span>
+                            <span class="text-xs text-slate-400">98% Reliability</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderCertificatesModule() {
+            const list = document.getElementById('cert-eligible-list');
+            list.innerHTML = '';
+            const eligible = volunteers.filter(v => v.hours >= 50);
+
+            eligible.forEach(v => {
+                list.innerHTML += `
+                    <div onclick="viewCertFor('${v.name}')" class="p-3 bg-white border border-slate-200 rounded-xl hover:border-emerald-500 cursor-pointer transition-all flex items-center justify-between">
+                        <div>
+                            <div class="font-bold text-xs text-slate-800">${v.name}</div>
+                            <div class="text-[10px] text-slate-500">${v.skill} • ${v.hours} hrs</div>
+                        </div>
+                        <i class="fa-solid fa-award text-amber-500"></i>
+                    </div>
+                `;
+            });
+        }
+
+        function viewCertFor(volName) {
+            switchVolTab('v-certs');
+            const vol = volunteers.find(v => v.name === volName) || volunteers[0];
+            document.getElementById('cert-holder-name').innerText = vol.name;
+            document.getElementById('cert-holder-hours').innerText = `${vol.hours} hours`;
+            document.getElementById('cert-holder-skill').innerText = vol.skill;
+        }
+
+        function downloadCertificatePNG() {
+            const name = document.getElementById('cert-holder-name').innerText;
+            const hours = document.getElementById('cert-holder-hours').innerText;
+            const skill = document.getElementById('cert-holder-skill').innerText;
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 1200;
+            canvas.height = 850;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#047857';
+            ctx.lineWidth = 16;
+            ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
+            ctx.strokeStyle = '#d97706';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(48, 48, canvas.width - 96, canvas.height - 96);
+            ctx.textAlign = 'center';
+
+            ctx.fillStyle = '#047857';
+            ctx.font = 'bold 42px Inter, sans-serif';
+            ctx.fillText('HOPE FOUNDATION', canvas.width / 2, 140);
+
+            ctx.fillStyle = '#64748b';
+            ctx.font = 'bold 16px Inter, sans-serif';
+            ctx.fillText('REGISTERED NGO • REGISTRATION NO. MH/2018/NGO-0492', canvas.width / 2, 180);
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect((canvas.width / 2) - 60, 210, 120, 6);
+
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'italic bold 38px Georgia, serif';
+            ctx.fillText('Certificate of Appreciation', canvas.width / 2, 280);
+
+            ctx.fillStyle = '#475569';
+            ctx.font = '20px Inter, sans-serif';
+            ctx.fillText('This certificate is proudly awarded to', canvas.width / 2, 340);
+
+            ctx.fillStyle = '#065f46';
+            ctx.font = 'bold 46px Inter, sans-serif';
+            ctx.fillText(name, canvas.width / 2, 420);
+
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect((canvas.width / 2) - 150, 435, 300, 4);
+
+            ctx.fillStyle = '#334155';
+            ctx.font = '20px Inter, sans-serif';
+            ctx.fillText(`In recognition of exemplary commitment and selfless service, logging ${hours}`, canvas.width / 2, 500);
+            ctx.fillText(`of volunteer service under the ${skill} initiative.`, canvas.width / 2, 535);
+
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 18px Inter, sans-serif';
+            ctx.fillText('Date: Sept 28, 2026', 100, 700);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '16px Inter, sans-serif';
+            ctx.fillText('Pune, MH Chapter', 100, 730);
+
+            ctx.textAlign = 'right';
+            ctx.fillStyle = '#0f172a';
+            ctx.font = 'bold 18px Inter, sans-serif';
+            ctx.fillText('Dr. Rajesh V. Kurup', canvas.width - 100, 700);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '16px Inter, sans-serif';
+            ctx.fillText('Director, Hope Foundation', canvas.width - 100, 730);
+
+            const dataUrl = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = `Certificate_${name.replace(/\s+/g, '_')}_Hope_Foundation.png`;
+            link.href = dataUrl;
+            link.click();
+        }
+
+        function printCertificate() {
+            window.print();
+        }
+
+        function updateCalculations() {
+            const totalVolunteers = volunteers.length;
+            const totalHours = volunteers.reduce((acc, curr) => acc + curr.hours, 0);
+            const economicValueINR = totalHours * 350;
+
+            document.getElementById('dash-total-volunteers').innerText = totalVolunteers + 242;
+            document.getElementById('dash-total-hours').innerText = totalHours.toLocaleString('en-IN') + ' hrs';
+            document.getElementById('dash-economic-val').innerText = '₹' + (economicValueINR / 100000).toFixed(2) + ' Lakhs';
+        }
+
+        async function handleAddVolunteer(e) {
+            e.preventDefault();
+            const name = document.getElementById('new-name').value;
+            const city = document.getElementById('new-city').value;
+            const skill = document.getElementById('new-skill').value;
+            const avail = document.getElementById('new-avail').value;
+
+            try {
+                const response = await fetch('/api/volunteers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, city, skill, avail })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Unable to add volunteer');
+                }
+
+                volunteers.unshift(data.volunteer);
+                renderAll();
+                closeModal('addVolunteerModal');
+                alert(`New Volunteer ${name} successfully added!`);
+            } catch (error) {
+                alert(error.message || 'Unable to add volunteer');
+            }
+        }
+
+        function populateAssignDropdown() {
+            const select = document.getElementById('assign-vol-select');
+            if (!select) return;
+            select.innerHTML = '';
+            volunteers.forEach(v => {
+                select.innerHTML += `<option value="${v.name}">${v.name} (${v.city} - ${v.skill})</option>`;
+            });
+        }
+
+        async function handleAssignVolunteer(e) {
+            e.preventDefault();
+            const volName = document.getElementById('assign-vol-select').value;
+            const project = document.getElementById('assign-proj-select').value;
+            const role = document.getElementById('assign-role').value;
+
+            try {
+                const response = await fetch('/api/assignments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ volunteerName: volName, project, role })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'Unable to assign volunteer');
+                }
+
+                assignments.unshift(data.assignment);
+                renderAssignments();
+                closeModal('assignModal');
+                alert(`Assigned ${volName} to ${project} as ${role}.`);
+            } catch (error) {
+                alert(error.message || 'Unable to assign volunteer');
+            }
+        }
+
+        function generateCustomReport() {
+            const mod = document.getElementById('builder-module').value;
+            const reg = document.getElementById('builder-region').value;
+
+            document.getElementById('report-title').innerText = `${mod} Report - Region: ${reg}`;
+            document.getElementById('report-body').innerHTML = `
+                <div class="p-3 bg-emerald-50 text-emerald-900 rounded-lg border border-emerald-200">
+                    <div class="font-bold">Aggregated Summary (${reg})</div>
+                    <ul class="list-disc list-inside mt-1 space-y-1">
+                        <li>Total Active Deployments: 42 field campaigns</li>
+                        <li>Average Volunteer Satisfaction Index: 4.85 / 5.0</li>
+                        <li>Net Direct Impact Beneficiaries: 14,200 individuals</li>
+                        <li>Estimated Saved Service Costs (INR): ₹4,97,000</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function exportToCSV() {
+            let csv = "Volunteer Name,City,Primary Skill,Hours Contributed,Status\n";
+            volunteers.forEach(v => {
+                csv += `"${v.name}","${v.city}","${v.skill}",${v.hours},"${v.status}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'Hope_Foundation_Volunteers_Report.csv');
+            a.click();
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(id).classList.add('flex');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            document.getElementById(id).classList.remove('flex');
+        }
+
+        function initCharts() {
+            const ctx1 = document.getElementById('chart-volunteer-hours').getContext('2d');
+            chartHoursInstance = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+                    datasets: [{
+                        label: 'Hours Contributed',
+                        data: [520, 680, 810, 940, 890, 980],
+                        backgroundColor: '#059669',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+
+            const ctx2 = document.getElementById('chart-financial-pie').getContext('2d');
+            chartFinancialInstance = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Shiksha Education', 'Annapurna Meals', 'Swasthya Healthcare', 'Admin & Ops'],
+                    datasets: [{
+                        data: [18.2, 14.1, 8.9, 7.3],
+                        backgroundColor: ['#059669', '#f59e0b', '#2563eb', '#64748b']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+
+            const ctx3 = document.getElementById('chart-state-reach').getContext('2d');
+            chartStateInstance = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: ['Maharashtra', 'Delhi NCR', 'Karnataka', 'West Bengal', 'Gujarat'],
+                    datasets: [{
+                        label: 'Beneficiaries Reached',
+                        data: [22400, 16500, 9800, 6200, 3500],
+                        backgroundColor: '#d97706',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
